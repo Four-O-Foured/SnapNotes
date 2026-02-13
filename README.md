@@ -1,4 +1,4 @@
-# SnapShot
+# SnapNotes
 
 SnapShot is a modern, AI-powered note-taking application designed to streamline how you capture and organize your thoughts. Built with a robust MERN stack and enhanced with cutting-edge UI libraries, it offers a seamless and visually engaging user experience.
 
