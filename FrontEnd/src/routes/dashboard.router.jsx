@@ -14,7 +14,9 @@ export const dashboardRoute = createRoute({
     path: '/dashboard',
     beforeLoad: () => {
         const { isAuthenticated, loading } = store.getState().auth;
-        if (!isAuthenticated && !loading) {
+        console.log("isAuthenticated", isAuthenticated, "loading", loading);
+
+        if (!isAuthenticated && loading) {
             throw redirect({ to: '/auth' });
         }
     },
@@ -44,12 +46,21 @@ export const dashboardIndexRoute = createRoute({
 export const snapNotesRoute = createRoute({
     getParentRoute: () => dashboardRoute,
     path: '/snapnotes',
+    component: () => <>
+        {console.log("snapNotesRoute")}
+        <Outlet />
+    </>
+});
+
+export const snapNotesIndexRoute = createRoute({
+    getParentRoute: () => snapNotesRoute,
+    path: '/',
     component: SnapNotePage,
 });
 
 // 4. The SnapNote Details Route (/dashboard/snapnotes/$noteId)
 export const snapNoteDetailsRoute = createRoute({
-    getParentRoute: () => dashboardRoute,
-    path: '/snapnotes/$noteId',
+    getParentRoute: () => snapNotesRoute,
+    path: '/$noteId',
     component: SnapNoteDetailsPage,
 });

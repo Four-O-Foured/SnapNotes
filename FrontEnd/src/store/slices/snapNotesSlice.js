@@ -21,6 +21,9 @@ const snapNotesSlice = createSlice({
         clearCurrentSnapNote: (state) => {
             state.currentSnapNote = null;
         },
+        clearSnapNotes: (state) => {
+            state.snapNotes = [];
+        },
     },
 });
 

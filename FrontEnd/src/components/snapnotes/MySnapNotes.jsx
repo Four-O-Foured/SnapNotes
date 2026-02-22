@@ -1,12 +1,26 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { Sparkles, Calendar, BookOpen, ChevronRight, Search } from "lucide-react";
+import { Sparkles, Calendar, BookOpen, ChevronRight, Search, Loader2 } from "lucide-react";
+import { useAllSnapNotesQuery } from "../../hooks/useSnapNotes";
+import { setSnapNotes } from "../../store/slices/snapNotesSlice";
 
 const MotionLink = motion.create(Link);
 
 const MySnapNotes = () => {
+    const dispatch = useDispatch();
     const { snapNotes } = useSelector((state) => state.snapNotes);
+
+    const { data: fetchedData, isLoading, isSuccess } = useAllSnapNotesQuery();
+
+    useEffect(() => {
+        if (isSuccess && fetchedData?.snapNotes) {
+            dispatch(setSnapNotes(fetchedData.snapNotes));
+        }
+    }, [isSuccess, fetchedData, dispatch]);
+
+    console.log(snapNotes);
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -27,6 +41,15 @@ const MySnapNotes = () => {
         },
     };
 
+    if (isLoading) {
+        return (
+            <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
+                <Loader2 className="w-10 h-10 text-snap-cyan animate-spin mb-4" />
+                <p className="text-snap-text-secondary">Loading your SnapNotes...</p>
+            </div>
+        );
+    }
+
     if (!snapNotes || snapNotes.length === 0) {
         return (
             <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
@@ -46,7 +69,7 @@ const MySnapNotes = () => {
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
                 <div>
                     <h1 className="text-4xl md:text-5xl font-bold text-snap-text-primary tracking-tight mb-2">

@@ -21,7 +21,7 @@ export const loginUserService = async (email, password) => {
 
     const isPasswordValid = await comparePassword(findUser.password, password);
     if (!isPasswordValid) {
-        throw new ApiError(401, "Invalid password");
+        throw new ApiError(401, "Invalid Credentials");
     }
     
     const accessToken = generateAccessToken(findUser._id);

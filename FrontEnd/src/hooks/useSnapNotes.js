@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import api from '../api/axios';
 import { showToast } from '../lib/toast';
 import { useDispatch } from 'react-redux';
@@ -34,7 +34,7 @@ export const useCreateSnapNote = () => {
             dispatch(setCurrentSnapNote(data.snapNotes));
 
             // Navigate to results
-            navigate({ to: `/dashboard/snapnotes/${data.snapNotes._id}`});
+            navigate({ to: `/dashboard/snapnotes/${data.snapNotes._id}` });
 
             return data;
         },
@@ -42,5 +42,20 @@ export const useCreateSnapNote = () => {
             const message = error.response?.data?.message || 'Failed to create SnapNote';
             showToast.error(message);
         },
+    });
+};
+
+export const useAllSnapNotesQuery = () => {
+    return useQuery({
+        queryKey: ['snapnotes'],
+        queryFn: async () => {
+            const response = await api.get('/snap/all');
+            return response.data;
+        },
+        retry: false,
+        staleTime: 1000 * 60 * 2, // 2 minutes
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
     });
 };

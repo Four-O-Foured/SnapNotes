@@ -1,6 +1,6 @@
 import { asyncHandler } from "../utils/asyncHandler.js"
 import { createSnapNotesService } from "../services/snapNotes.services.js";
-import { createSnapNotesDAO } from "../DAO/snapNotes.dao.js";
+import { createSnapNotesDAO, getAllSnapNotesDAO } from "../DAO/snapNotes.dao.js";
 
 export const createSnapNotes = asyncHandler(async (req, res) => {
     // 1. Get local file path from multer
@@ -18,6 +18,14 @@ export const createSnapNotes = asyncHandler(async (req, res) => {
     const snapNotes = await createSnapNotesDAO(result.snapNotes, req.user._id, result.imageUrl);
     res.json({
         message: result.message,
+        snapNotes
+    });
+});
+
+export const getAllSnapNotes = asyncHandler(async (req, res) => {
+    const snapNotes = await getAllSnapNotesDAO(req.user._id);
+    res.json({
+        message: "SnapNotes fetched successfully",
         snapNotes
     });
 });

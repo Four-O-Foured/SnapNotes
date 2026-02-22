@@ -12,8 +12,8 @@ export const getSnapNotesDAO = async (id) => {
     return await SnapNotesModel.findById(id);
 }
 
-export const getAllSnapNotesDAO = async () => {
-    return await SnapNotesModel.find();
+export const getAllSnapNotesDAO = async (userId) => {
+    return await SnapNotesModel.find({ user: userId }).sort({ createdAt: -1 });
 }
 
 export const updateSnapNotesDAO = async (id, snapNotes) => {

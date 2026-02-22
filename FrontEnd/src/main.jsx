@@ -11,7 +11,7 @@ import { store } from './store/store'
 import { useEffect, useRef } from 'react';
 
 const AppRouter = () => {
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector((state) => state.auth?.isAuthenticated);
   const isFirstRender = useRef(true);
 
   // When auth state changes (login/logout), tell the router to re-run beforeLoad guards
