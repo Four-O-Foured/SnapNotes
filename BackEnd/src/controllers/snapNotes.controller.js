@@ -7,15 +7,14 @@ export const createSnapNotes = asyncHandler(async (req, res) => {
 
     const { userPreference } = req?.body;
 
-    const localFilePath = req?.file?.path;
+    const localFiles = req?.files?.map(file => ({ path: file.path, mimeType: file.mimetype })) || [];
 
-
-       const result = await createSnapNotesService(localFilePath, userPreference);
+    const result = await createSnapNotesService(localFiles, userPreference);
 
 
     // 4. Return response (In real app, you'd save result.url to DB here)
 
-    const snapNotes = await createSnapNotesDAO(result.snapNotes, req.user._id, result.imageUrl);
+    const snapNotes = await createSnapNotesDAO(result.snapNotes, req.user._id, result.imageUrls);
     res.json({
         message: result.message,
         snapNotes

@@ -23,8 +23,8 @@ export const navItems = [
         hoverStyles: { bgColor: 'hsl(var(--snap-mint))', textColor: 'hsl(var(--snap-bg-main))', glowColor: 'hsla(var(--snap-mint), 0.4)' }
     },
     {
-        label: 'Flashcards',
-        to: '/dashboard/flashcards',
+        label: 'Library',
+        to: '/dashboard/library',
         icon: Star,
         rotation: 14,
         offset: -25,

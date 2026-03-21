@@ -1,26 +1,13 @@
-import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
 import { Sparkles, Calendar, BookOpen, ChevronRight, Search, Loader2 } from "lucide-react";
-import { useAllSnapNotesQuery } from "../../hooks/useSnapNotes";
-import { setSnapNotes } from "../../store/slices/snapNotesSlice";
 
 const MotionLink = motion.create(Link);
 
 const MySnapNotes = () => {
-    const dispatch = useDispatch();
     const { snapNotes } = useSelector((state) => state.snapNotes);
 
-    const { data: fetchedData, isLoading, isSuccess } = useAllSnapNotesQuery();
-
-    useEffect(() => {
-        if (isSuccess && fetchedData?.snapNotes) {
-            dispatch(setSnapNotes(fetchedData.snapNotes));
-        }
-    }, [isSuccess, fetchedData, dispatch]);
-
-    console.log(snapNotes);
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -41,14 +28,8 @@ const MySnapNotes = () => {
         },
     };
 
-    if (isLoading) {
-        return (
-            <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4">
-                <Loader2 className="w-10 h-10 text-snap-cyan animate-spin mb-4" />
-                <p className="text-snap-text-secondary">Loading your SnapNotes...</p>
-            </div>
-        );
-    }
+    // No loading check needed here as the router's beforeLoad ensures 
+    // data is hydrated in Redux before this component renders.
 
     if (!snapNotes || snapNotes.length === 0) {
         return (
@@ -114,9 +95,9 @@ const MySnapNotes = () => {
 
                             {/* Header Image */}
                             <div className="relative h-48 overflow-hidden bg-snap-bg-panel/60">
-                                {note.image ? (
+                                {note.images?.[0] ? (
                                     <img
-                                        src={note.image}
+                                        src={note.images[0]}
                                         alt={note.snapNotes.lesson_title || "Study Note"}
                                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                                     />
@@ -129,7 +110,7 @@ const MySnapNotes = () => {
 
                                 <div className="absolute bottom-4 left-4 flex items-center gap-2">
                                     <div className="px-3 py-1 rounded-full bg-snap-cyan/20 backdrop-blur-md border border-snap-cyan/30 text-[10px] font-bold text-snap-cyan uppercase tracking-wider">
-                                        {note.type || "Summary"}
+                                        {note.snapNotes.subject || note.type || "General"}
                                     </div>
                                 </div>
                             </div>

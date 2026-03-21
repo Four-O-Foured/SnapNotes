@@ -39,8 +39,11 @@ const SnapNoteDetailsPage = () => {
             className="space-y-8"
         >
             <div className="text-center space-y-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-snap-cyan/10 border border-snap-cyan/20 text-xs font-bold text-snap-cyan uppercase tracking-widest mb-2">
+                    {selectedNote.snapNotes?.subject || selectedNote.subject || "Study Material"}
+                </div>
                 <h1 className="text-3xl md:text-5xl font-bold text-snap-text-primary tracking-tight">
-                    {selectedNote.lesson_title || selectedNote.topic || "Study Insights"}
+                    {selectedNote.snapNotes?.lesson_title || selectedNote.lesson_title || selectedNote.topic || "Study Insights"}
                 </h1>
                 <p className="text-snap-text-secondary">
                     Detailed AI analysis and study materials for this topic.

@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import api from '../api/axios';
 import { showToast } from '../lib/toast';
 import { useDispatch } from 'react-redux';
-import { addSnapNote, setCurrentSnapNote } from '../store/slices/snapNotesSlice';
+import { addSnapNote, setCurrentSnapNote, setSnapNotes } from '../store/slices/snapNotesSlice';
 import { useNavigate } from '@tanstack/react-router';
 
 
@@ -13,7 +13,11 @@ export const useCreateSnapNote = () => {
     return useMutation({
         mutationFn: async (data) => {
             const formData = new FormData();
-            formData.append("image", data.file);
+            if (data.files && data.files.length > 0) {
+                data.files.forEach(file => {
+                    formData.append("images", file);
+                });
+            }
             if (data.userPreference) {
                 formData.append("userPreference", data.userPreference);
             }
@@ -45,17 +49,17 @@ export const useCreateSnapNote = () => {
     });
 };
 
+export const fetchSnapNotes = async () => {
+    const response = await api.get('/snap/all');
+    return response.data;
+};
+
+
 export const useAllSnapNotesQuery = () => {
     return useQuery({
         queryKey: ['snapnotes'],
-        queryFn: async () => {
-            const response = await api.get('/snap/all');
-            return response.data;
-        },
+        queryFn: fetchSnapNotes,
+        staleTime: 1000 * 60 * 5, // 5 minutes
         retry: false,
-        staleTime: 1000 * 60 * 2, // 2 minutes
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-        refetchOnReconnect: false,
     });
 };

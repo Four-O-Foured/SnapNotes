@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import UserModel from "../models/user.Model.js";
 
 const snapNotesSchema = new mongoose.Schema({
-    image: {
-        type: String,
-        required: true
+    images: {
+        type: [String],
+        default: []
     },
     snapNotes: {
         type: Object,

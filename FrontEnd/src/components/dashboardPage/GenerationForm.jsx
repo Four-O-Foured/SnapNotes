@@ -14,14 +14,14 @@ import { clearCurrentSnapNote } from "../../store/slices/snapNotesSlice";
 const GenerationForm = () => {
     const { control, handleSubmit, watch, setValue, reset } = useForm({
         defaultValues: {
-            file: null,
+            files: null,
             userPreference: ""
         }
     });
     const dispatch = useDispatch();
     const { mutate, isPending } = useCreateSnapNote();
 
-    const file = watch("file");
+    const files = watch("files");
     const userPreference = watch("userPreference");
     const textareaRef = useRef(null);
 
@@ -43,8 +43,8 @@ const GenerationForm = () => {
     }, []);
 
     const handleFormSubmit = (data) => {
-        if (!data.file) {
-            showToast.error("Please upload a file to start generating.");
+        if (!data.files || data.files.length === 0) {
+            showToast.error("Please upload at least one file to start generating.");
             return;
         }
 
@@ -104,11 +104,11 @@ const GenerationForm = () => {
     return (
         <form onSubmit={handleSubmit(handleFormSubmit)} className="w-full max-w-4xl mx-auto space-y-8">
             {/* File Upload Section */}
-            <RHFFileDrop name="file" control={control}>
-                {({ isDragging, preview, file, removeFile, triggerBrowser }) => (
+            <RHFFileDrop name="files" control={control} multiple={true}>
+                {({ isDragging, preview, file: currentFiles, removeFile, triggerBrowser }) => (
                     <div className="w-full">
                         <AnimatePresence mode="wait">
-                            {preview ? (
+                            {preview && preview.length > 0 ? (
                                 <motion.div
                                     key="preview"
                                     className="glass-card-glow p-4 sm:p-6 md:p-8 w-full relative"
@@ -117,26 +117,29 @@ const GenerationForm = () => {
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    <motion.button
-                                        type="button"
-                                        onClick={() => removeFile()}
-                                        className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-snap-bg-panel border border-border flex items-center justify-center text-snap-text-muted hover:text-snap-text-primary transition-colors z-10"
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.95 }}
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </motion.button>
-
-                                    <div className="w-full h-48 sm:h-64 md:h-72 rounded-lg overflow-hidden bg-snap-bg-panel mb-4">
-                                        <img src={preview} alt="Preview" className="w-full h-full object-contain" />
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-4">
+                                        {preview.map((p, index) => (
+                                            <div key={p} className="relative group/preview rounded-lg overflow-hidden bg-snap-bg-panel h-32 sm:h-40">
+                                                <img src={p} alt={`Preview ${index}`} className="w-full h-full object-cover" />
+                                                <motion.button
+                                                    type="button"
+                                                    onClick={(e) => { e.stopPropagation(); removeFile(index); }}
+                                                    className="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-500/80 hover:bg-red-500 text-white flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-all z-10"
+                                                    whileHover={{ scale: 1.1 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    <X className="w-3 h-3" />
+                                                </motion.button>
+                                            </div>
+                                        ))}
                                     </div>
 
-                                    <div className="flex items-center gap-3 bg-snap-bg-panel/50 px-4 py-2 rounded-full border border-white/5 w-fit mx-auto">
+                                    <div className="flex items-center gap-3 bg-snap-bg-panel/50 px-4 py-2 rounded-full border border-white/5 w-fit mx-auto cursor-pointer hover:bg-snap-bg-panel transition-colors" onClick={triggerBrowser}>
                                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                                             <Image className="w-4 h-4 text-primary" />
                                         </div>
                                         <p className="text-sm text-snap-text-primary font-medium truncate max-w-[200px]">
-                                            {file?.name || "Uploaded Image"}
+                                            {currentFiles?.length} {currentFiles?.length === 1 ? 'Image' : 'Images'} Selected (Add More)
                                         </p>
                                     </div>
                                 </motion.div>
@@ -210,7 +213,7 @@ const GenerationForm = () => {
                         value={userPreference || ""}
                         onChange={(e) => setValue("userPreference", e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder="Type custom preferences here (optional) (e.g. make it more concise, add more examples, explain for 8th grader, etc.)"
+                        placeholder="Type custom preferences here (optional) (e.g. make it more concise, add more examples, explain for 8th grader, ELI5, etc.)"
                         className="w-full bg-transparent flex items-end border-none outline-none focus:ring-0 text-snap-text-primary placeholder:text-snap-text-muted/70 resize-none py-3 max-h-[200px] min-h-[50px] scrollbar-hide"
                         rows={1}
                         disabled={isPending}
@@ -218,7 +221,7 @@ const GenerationForm = () => {
 
                     <button
                         type="submit"
-                        disabled={(!userPreference && !file) || isPending}
+                        disabled={((!files || files.length === 0) && !userPreference) || isPending}
                         className="p-3 mb-1 rounded-full bg-snap-cyan/10 text-snap-cyan hover:bg-snap-cyan hover:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group-submit"
                     >
                         {isPending ? (

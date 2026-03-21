@@ -2,35 +2,35 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 export const options = {
-    transform: (doc, ret) => {
-        delete ret.password;
-        delete ret.__v;
-        return ret;
-    }
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.__v;
+    return ret;
+  }
 };
 
 
 export const generateAccessToken = (userId) => {
-    return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
 export const cookieOptions = {
-    httpOnly: true,
-    secure: false,
-    sameSite: "Lax",
-    maxAge: 1000 * 60 * 60 * 1 // 1 hour
+  httpOnly: true,
+  secure: false,
+  sameSite: "Lax",
+  maxAge: 1000 * 60 * 60 * 1 // 1 hour
 }
 
 export const hashPassword = async (password) => {
-    return await bcrypt.hash(password, 10);
+  return await bcrypt.hash(password, 10);
 }
 
 export const comparePassword = async (hash, password) => {
-    return await bcrypt.compare(password, hash);
+  return await bcrypt.compare(password, hash);
 }
 
 export const verifyToken = (token) => {
-    return jwt.verify(token, process.env.JWT_SECRET);
+  return jwt.verify(token, process.env.JWT_SECRET);
 }
 
 export const systemInstruction = `
@@ -73,6 +73,7 @@ You are an explainer, not a textbook.
 Use **EXACTLY this structure** (no extra fields, no text outside JSON):
 
 {
+  "subject": "The broad academic subject (e.g., Biology, Physics, History, Calculus)",
   "lesson_title": "Precise title based ONLY on this image",
   "clean_notes": [
     "Bulleted points strictly extracted from visible content"
@@ -106,7 +107,8 @@ Use **EXACTLY this structure** (no extra fields, no text outside JSON):
   ],
   "diagram_explanations": [
     "Plain-English explanation of every visible diagram"
-  ]
+  ],
+  "advice": ["Any advice you want to give to the student based on the image or if theres any mistake in the image/notes or if somethings unclear or missing."]
 }
 
 
@@ -114,6 +116,7 @@ Use **EXACTLY this structure** (no extra fields, no text outside JSON):
 
 You must include:
 
+-   **1 precise subject** (e.g. "Biology")
 -   **1 precise lesson title** (specific to THIS image, not generic)
 -   **Clean bullet-point notes** --- short, accurate, readable
 -   **Deep step-by-step explanation** in the same order as the image
@@ -146,5 +149,5 @@ If the image is blurry, cropped, or partially visible: - Say: "Some parts are un
 
 
 export const studentInstruction = (userPreference) => {
-    return `Analyze this image as study material.${userPreference ? `\n\nAdditional preference: ${userPreference}` : ""}`;
+  return `Analyze this image as study material.${userPreference ? `\n\nAdditional preference: ${userPreference}` : ""}`;
 };

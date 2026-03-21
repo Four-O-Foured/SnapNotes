@@ -6,18 +6,38 @@ import SnapNoteDetailsPage from "../pages/SnapNoteDetailsPage.jsx";
 import BubbleMenu from "@/components/layout/BubbleMenu";
 import { navItems } from "../lib/utils";
 import { store } from "../store/store";
+import { setLoading } from "../store/slices/authSlice.js";
+import { setSnapNotes } from "../store/slices/snapNotesSlice.js";
+import { fetchSnapNotes } from "../hooks/useSnapNotes.js";
+import { queryClient } from "../lib/react-query";
+import ExamPage from "../pages/ExamPage.jsx";
 
 // 1. The Parent (Layout) Route
 // This defines the shared structure (Navbar/Sidebar) for all /dashboard/* pages
 export const dashboardRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: '/dashboard',
-    beforeLoad: () => {
-        const { isAuthenticated, loading } = store.getState().auth;
-        console.log("isAuthenticated", isAuthenticated, "loading", loading);
+    beforeLoad: async () => {
+        const { dispatch } = store;
+        const { isAuthenticated } = store.getState().auth;
 
-        if (!isAuthenticated && loading) {
+        if (!isAuthenticated) {
+            dispatch(setLoading(true));
             throw redirect({ to: '/auth' });
+        }
+
+        // Prefetch data and sync to Redux
+        try {
+            const data = await queryClient.ensureQueryData({
+                queryKey: ['snapnotes'],
+                queryFn: fetchSnapNotes,
+            });
+
+            if (data?.snapNotes) {
+                dispatch(setSnapNotes(data.snapNotes));
+            }
+        } catch (error) {
+            console.error("Router prefetch error:", error);
         }
     },
     component: () => (
@@ -47,7 +67,6 @@ export const snapNotesRoute = createRoute({
     getParentRoute: () => dashboardRoute,
     path: '/snapnotes',
     component: () => <>
-        {console.log("snapNotesRoute")}
         <Outlet />
     </>
 });
@@ -64,3 +83,10 @@ export const snapNoteDetailsRoute = createRoute({
     path: '/$noteId',
     component: SnapNoteDetailsPage,
 });
+
+export const examRoute = createRoute({
+    getParentRoute: () => dashboardRoute,
+    path: '/exam',
+    component: ExamPage,
+});
+

@@ -9,7 +9,7 @@ router.use(authMiddleware);
 
 
 
-router.post("/create", upload.single("image"), createSnapNotes);
+router.post("/create", upload.array("images", 10), createSnapNotes);
 
 router.get("/all", getAllSnapNotes);
 

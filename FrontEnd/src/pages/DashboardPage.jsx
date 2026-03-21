@@ -1,15 +1,8 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import GenerationForm from "@/components/dashboardPage/GenerationForm";
-import { useSelector } from "react-redux";
 
 const Dashboard = () => {
-
-  const { user } = useSelector((state) => state.auth);
-
-
-
-  console.log(user);
 
   return (
     <div className="space-y-8 md:space-y-16">

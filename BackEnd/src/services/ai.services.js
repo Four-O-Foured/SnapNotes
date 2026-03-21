@@ -3,23 +3,20 @@ import { studentInstruction, systemInstruction } from "../utils/helper.js";
 import { SnapNotesResponseSchema } from "../utils/studentResponseSchema.js";
 import * as z from "zod";
 
-async function generateSnapNotes(base64ImageData, userPreference) {
+async function generateSnapNotes(base64ImageArray, userPreference) {
   const ai = new GoogleGenAI({});
 
-
+  const imageParts = base64ImageArray.map(img => ({
+    inlineData: {
+      mimeType: img.mimeType,
+      data: img.data,
+    },
+  }));
 
   const contents = [
-    {
-      inlineData: {
-        mimeType: 'image/jpeg',
-        data: base64ImageData,
-      },
-    },
+    ...imageParts,
     { text: studentInstruction(userPreference) }
   ]
-
-  console.log(contents);
-
 
   const result = await ai.models.generateContent({
     model: "gemini-2.5-flash",

@@ -8,7 +8,8 @@ const RHFFileDrop = ({
     accept = "image/*",
     children,
     className,
-    onFileSelect
+    onFileSelect,
+    multiple = false
 }) => {
     const {
         field: { onChange, value, ref },
@@ -24,15 +25,21 @@ const RHFFileDrop = ({
 
     // Handle preview generation
     useEffect(() => {
-        if (!value || !(value instanceof File)) {
-            setPreview(null);
+        if (!value) {
+            setPreview(multiple ? [] : null);
             return;
         }
 
-        const objectUrl = URL.createObjectURL(value);
-        setPreview(objectUrl);
-        return () => URL.revokeObjectURL(objectUrl);
-    }, [value]);
+        if (multiple && Array.isArray(value)) {
+            const objectUrls = value.map(file => URL.createObjectURL(file));
+            setPreview(objectUrls);
+            return () => objectUrls.forEach(url => URL.revokeObjectURL(url));
+        } else if (!multiple && value instanceof File) {
+            const objectUrl = URL.createObjectURL(value);
+            setPreview(objectUrl);
+            return () => URL.revokeObjectURL(objectUrl);
+        }
+    }, [value, multiple]);
 
     // Drag events
     const onDragOver = (e) => {
@@ -49,25 +56,47 @@ const RHFFileDrop = ({
         e.preventDefault();
         setIsDragging(false);
 
-        const file = e.dataTransfer.files?.[0];
-        if (file) handleFile(file);
+        const files = Array.from(e.dataTransfer.files || []);
+        if (files.length > 0) {
+            handleFiles(files);
+        }
     };
 
     // Input change event
     const onFileInput = (e) => {
-        const file = e.target.files?.[0];
-        if (file) handleFile(file);
+        const files = Array.from(e.target.files || []);
+        if (files.length > 0) {
+            handleFiles(files);
+        }
     };
 
     // Common file handler
-    const handleFile = (file) => {
-        onChange(file);
-        onFileSelect?.(file);
+    const handleFiles = (files) => {
+        if (multiple) {
+            // Append new files to existing value or create new array
+            const currentFiles = Array.isArray(value) ? value : [];
+            const newFiles = [...currentFiles, ...files];
+            onChange(newFiles);
+            onFileSelect?.(newFiles);
+        } else {
+            onChange(files[0]);
+            onFileSelect?.(files[0]);
+        }
+        
+        // Reset the input so the same files can be selected again if needed
+        const input = document.getElementById(`file-upload-${name}`);
+        if (input) input.value = '';
     };
 
-    const removeFile = () => {
-        onChange(null);
-        onFileSelect?.(null);
+    const removeFile = (indexToRemove) => {
+        if (multiple && Array.isArray(value)) {
+            const newFiles = value.filter((_, index) => index !== indexToRemove);
+            onChange(newFiles.length > 0 ? newFiles : null);
+            onFileSelect?.(newFiles.length > 0 ? newFiles : null);
+        } else {
+            onChange(null);
+            onFileSelect?.(null);
+        }
     };
 
     const triggerBrowser = () => {
@@ -88,6 +117,7 @@ const RHFFileDrop = ({
                 className="hidden"
                 accept={accept}
                 onChange={onFileInput}
+                multiple={multiple}
             />
             {children({
                 isDragging,

@@ -21,6 +21,7 @@ export const MindMapSchema = z.object({
 });
 
 export const SnapNotesResponseSchema = z.object({
+  subject: z.string(),
   lesson_title: z.string(),
 
   clean_notes: z.array(z.string()).min(5),
@@ -39,4 +40,6 @@ export const SnapNotesResponseSchema = z.object({
   key_terms: z.array(z.string()).min(4),
 
   diagram_explanations: z.array(z.string()).min(1),
+
+  advice: z.array(z.string()).min(0),
 });

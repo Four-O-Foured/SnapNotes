@@ -1,10 +1,10 @@
 import SnapNotesModel from "../models/snapNotes.model.js";
 
-export const createSnapNotesDAO = async (snapNotes, user, image) => {
+export const createSnapNotesDAO = async (snapNotes, user, images) => {
     return await SnapNotesModel.create({
         snapNotes,
         user,
-        image
+        images
     });
 }
 
