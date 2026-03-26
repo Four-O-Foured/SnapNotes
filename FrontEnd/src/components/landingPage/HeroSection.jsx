@@ -70,21 +70,7 @@ const HeroSection = () => {
                 </Button>
               </motion.div>
 
-              {/* Trust Indicators */}
-              <motion.div
-                className="pt-4 md:pt-8"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.4 }}
-              >
-                <p className="text-small text-snap-text-muted mb-4">Trusted by students at</p>
-                <div className="flex items-center gap-4 md:gap-8 justify-center md:justify-start flex-wrap opacity-50">
-                  <span className="text-snap-text-secondary font-medium text-sm">Stanford</span>
-                  <span className="text-snap-text-secondary font-medium text-sm">MIT</span>
-                  <span className="text-snap-text-secondary font-medium text-sm">Harvard</span>
-                  <span className="text-snap-text-secondary font-medium text-sm">Berkeley</span>
-                </div>
-              </motion.div>
+          
             </motion.div>
 
             {/* Right Content - Mockup */}

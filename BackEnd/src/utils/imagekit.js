@@ -16,7 +16,7 @@ const imagekit = new ImageKit({
  * @param {string} localFilePath - Path to the file on disk.
  * @returns {Promise<object|null>} ImageKit response or null if failed.
  */
-export const uploadImageOnImageKit = async (localFilePath) => {
+export const uploadImageOnImageKit = async (localFilePath, folder = "Notes") => {
     try {
         if (!localFilePath) return null;
 
@@ -28,7 +28,7 @@ export const uploadImageOnImageKit = async (localFilePath) => {
         const result = await imagekit.files.upload({
             file: fileBuffer.toString("base64"),
             fileName: fileName,
-            folder: "posts",
+            folder: folder,
         });
 
         // Cleanup local file after success

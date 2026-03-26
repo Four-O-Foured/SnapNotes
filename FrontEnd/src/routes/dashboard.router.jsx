@@ -1,4 +1,4 @@
-import { createRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createRoute, Link, Outlet, redirect } from "@tanstack/react-router";
 import { rootRoute } from "./router.jsx";
 import DashboardPage from "../pages/DashboardPage.jsx";
 import SnapNotePage from "../pages/SnapNotePage.jsx";
@@ -11,6 +11,9 @@ import { setSnapNotes } from "../store/slices/snapNotesSlice.js";
 import { fetchSnapNotes } from "../hooks/useSnapNotes.js";
 import { queryClient } from "../lib/react-query";
 import ExamPage from "../pages/ExamPage.jsx";
+import LibraryPage from "../pages/LibraryPage.jsx";
+import UploadBookPage from "../pages/UploadBookPage.jsx";
+import { LucideBookPlus } from "lucide-react";
 
 // 1. The Parent (Layout) Route
 // This defines the shared structure (Navbar/Sidebar) for all /dashboard/* pages
@@ -88,5 +91,29 @@ export const examRoute = createRoute({
     getParentRoute: () => dashboardRoute,
     path: '/exam',
     component: ExamPage,
+});
+
+export const libraryRoute = createRoute({
+    getParentRoute: () => dashboardRoute,
+    path: '/library',
+    component: () => <>
+        <div className='flex justify-between items-center mb-10'>
+            <h1 className='text-4xl md:text-7xl julius-sans-one-regular tracking-tight'>Library</h1>
+            <Link to="/dashboard/library/upload" className='bg-transparent border border-snap-bg-cyan/50 flex items-center gap-2 text-white hover:border-snap-cyan/60 hover:scale-105 transition-all duration-300 px-4 py-2 rounded-full text-xs group/upload md:text-base'><LucideBookPlus className="w-4 h-4 md:w-6 md:h-6 group-hover/upload:text-snap-cyan" />Upload Book</Link>
+        </div>
+        <Outlet />
+    </>,
+});
+
+export const libraryIndexRoute = createRoute({
+    getParentRoute: () => libraryRoute,
+    path: '/',
+    component: LibraryPage,
+});
+
+export const libraryUploadRoute = createRoute({
+    getParentRoute: () => libraryRoute,
+    path: '/upload',
+    component: UploadBookPage,
 });
 

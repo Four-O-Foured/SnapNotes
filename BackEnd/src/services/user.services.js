@@ -13,7 +13,7 @@ export const registerUserService = async (username, email, password) => {
     return { user, accessToken };
 }
 
-export const loginUserService = async (email, password) => {
+export const loginUserService = async (email, password, rememberMe = false) => {
     const findUser = await emailSelectPasswordFind(email);
     if (!findUser) {
         throw new ApiError(404, "User not found");
@@ -24,7 +24,7 @@ export const loginUserService = async (email, password) => {
         throw new ApiError(401, "Invalid Credentials");
     }
     
-    const accessToken = generateAccessToken(findUser._id);
+    const accessToken = generateAccessToken(findUser._id, rememberMe);
 
     return { user: findUser, accessToken };
 }

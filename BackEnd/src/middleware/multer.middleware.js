@@ -14,8 +14,12 @@ const fileFilter = (req, file, cb) => {
     // Only allow jpg, jpeg, png, webp
     if (file.mimetype === "image/jpeg" || file.mimetype === "image/jpg" || file.mimetype === "image/png" || file.mimetype === "image/webp") {
         cb(null, true);
-    } else {
-        cb(new Error("Invalid file type. Only JPG, JPEG, PNG, and WEBP are allowed."), false);
+    }
+    else if (file.mimetype === "application/pdf") {
+        cb(null, true);
+    }
+    else {
+        cb(new Error("Invalid file type. Only JPG, JPEG, PNG, WEBP and PDF are allowed."), false);
     }
 };
 
@@ -23,6 +27,6 @@ const fileFilter = (req, file, cb) => {
 
 export const upload = multer({
     storage,
-    limits: { fileSize: 20 * 1024 * 1024 },
+    limits: { fileSize: 25 * 1024 * 1024 }, // 25MB
     fileFilter
 });

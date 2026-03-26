@@ -9,7 +9,8 @@ const RHFFileDrop = ({
     children,
     className,
     onFileSelect,
-    multiple = false
+    multiple = false,
+    required = true
 }) => {
     const {
         field: { onChange, value, ref },
@@ -17,7 +18,7 @@ const RHFFileDrop = ({
     } = useController({
         name,
         control,
-        rules: { required: "Please upload a file" }
+        rules: required ? { required: "Please upload a file" } : {}
     });
 
     const [isDragging, setIsDragging] = useState(false);

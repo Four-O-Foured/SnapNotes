@@ -2,7 +2,7 @@ import { createRootRoute, createRouter } from '@tanstack/react-router';
 import App from '../App';
 import { landingRoute } from './landingPage.router.jsx';
 import { authRoute } from './auth.router.jsx';
-import { dashboardRoute, dashboardIndexRoute, snapNotesRoute, snapNoteDetailsRoute, snapNotesIndexRoute, examRoute } from './dashboard.router.jsx';
+import { dashboardRoute, dashboardIndexRoute, snapNotesRoute, snapNoteDetailsRoute, snapNotesIndexRoute, examRoute, libraryRoute, libraryIndexRoute, libraryUploadRoute } from './dashboard.router.jsx';
 
 // Root route - layout wrapper for all routes
 // Do NOT define context here -- it comes from RouterProvider in main.jsx
@@ -19,7 +19,11 @@ export const routeTree = rootRoute.addChildren([
             snapNotesIndexRoute,
             snapNoteDetailsRoute
         ]),
-        examRoute
+        examRoute,
+        libraryRoute.addChildren([
+            libraryIndexRoute,
+            libraryUploadRoute
+        ])
     ]),
     authRoute
 ]);

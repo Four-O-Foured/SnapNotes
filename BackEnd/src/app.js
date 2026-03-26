@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import authRoutes from "./routes/auth.routes.js";
 import snapNotesRoutes from "./routes/snapNotes.routes.js";
+import libraryRoutes from "./routes/library.routes.js";
 import { globalErrorHandler } from "./utils/globalErrorHandler.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -14,6 +15,8 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/snap", snapNotesRoutes);
+app.use("/api/library", libraryRoutes);
+
 
 app.use(globalErrorHandler);
 

@@ -12,8 +12,6 @@ export const createSnapNotes = asyncHandler(async (req, res) => {
     const result = await createSnapNotesService(localFiles, userPreference);
 
 
-    // 4. Return response (In real app, you'd save result.url to DB here)
-
     const snapNotes = await createSnapNotesDAO(result.snapNotes, req.user._id, result.imageUrls);
     res.json({
         message: result.message,
