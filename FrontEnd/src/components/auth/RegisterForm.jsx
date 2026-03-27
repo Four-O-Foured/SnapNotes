@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { useAuthActions } from '../../hooks/useAuth';
+import GoogleAuthButton from './GoogleAuthButton';
 
 const RegisterForm = ({ onToggle }) => {
     const { register: registerUser } = useAuthActions();
@@ -117,6 +118,17 @@ const RegisterForm = ({ onToggle }) => {
                     </>
                 )}
             </button>
+
+            <div className="relative my-6 opacity-70">
+                <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-white/20"></div>
+                </div>
+                <div className="relative flex justify-center text-xs">
+                    <span className="bg-snap-bg-panel px-2 text-snap-text-muted">OR</span>
+                </div>
+            </div>
+
+            <GoogleAuthButton />
 
             <p className="text-center text-sm text-snap-text-secondary mt-6">
                 Already have an account?{' '}

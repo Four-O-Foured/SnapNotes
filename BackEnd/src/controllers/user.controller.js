@@ -1,7 +1,20 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { loginUserService, registerUserService } from "../services/user.services.js";
+import { loginUserService, registerUserService, googleAuthService } from "../services/user.services.js";
 import { ApiError } from "../utils/ApiError.js";
 import { getCookieOptions } from "../utils/helper.js";
+
+export const googleAuth = asyncHandler(async (req, res) => {
+    const { token } = req.body;
+    if (!token) {
+        throw new ApiError(400, "Google Token is required");
+    }
+    
+    const { user, accessToken } = await googleAuthService(token);
+    
+    // Use existing standard session mechanism
+    res.cookie("accessToken", accessToken, getCookieOptions());
+    res.json({ message: "Google Login successful", user, accessToken });
+});
 
 export const registerUser = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body;

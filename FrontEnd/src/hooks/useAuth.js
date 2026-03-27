@@ -4,6 +4,7 @@ import { setUser, logout as logoutAction } from '../store/slices/authSlice';
 import api from '../api/axios';
 import { showToast } from '../lib/toast';
 import { useNavigate } from '@tanstack/react-router';
+import { googleLogout } from '@react-oauth/google';
 
 /**
  * Session-only hook. Used in App.jsx (root layout) to check auth status once.
@@ -67,12 +68,29 @@ export const useAuthActions = () => {
         },
     });
 
+    const googleLoginMutation = useMutation({
+        mutationFn: async (token) => {
+            const response = await api.post('/auth/google', { token });
+            return response.data.user;
+        },
+        onSuccess: (user) => {
+            dispatch(setUser(user));
+            queryClient.setQueryData(['auth'], { user });
+            showToast.success(`Welcome seamlessly, ${user.username || 'Google User'}!`);
+        },
+        onError: (error) => {
+            console.error('Google Login Error:', error);
+            showToast.error(error.response?.data?.message || 'Google Login failed.');
+        },
+    });
+
     const logoutMutation = useMutation({
         mutationFn: async () => {
             await api.get('/auth/logout');
             return true;
         },
         onSuccess: () => {
+            googleLogout(); // Clears Google's local active session
             dispatch(logoutAction());
             queryClient.clear();
             showToast.success('Logged out successfully.');
@@ -83,6 +101,7 @@ export const useAuthActions = () => {
     return {
         register: registerMutation,
         login: loginMutation,
+        googleLogin: googleLoginMutation,
         logout: logoutMutation,
     };
 };

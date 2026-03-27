@@ -26,12 +26,16 @@ const AppRouter = () => {
   return <RouterProvider router={router} />;
 };
 
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 createRoot(document.getElementById('root')).render(
-  <Provider store={store}>
-    <QueryClientProvider client={queryClient}>
-      <AppRouter />
-      <Toaster position="top-right" reverseOrder={false} />
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
-  </Provider>
+  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <AppRouter />
+        <Toaster position="top-right" reverseOrder={false} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </Provider>
+  </GoogleOAuthProvider>
 )

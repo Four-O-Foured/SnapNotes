@@ -54,48 +54,59 @@ export const addBookService = async (req) => {
     }
 
     const pdfLocalPath = req.files.pdf[0].path;
-
-    const fileBuffer = await fs.readFile(pdfLocalPath);
-
     let coverImageLocalPath = hasCoverImage ? req.files.coverImage[0].path : null;
 
-    // Always parse the PDF for its text segments! Only generate cover if missing.
-    const { coverBuffer, content: segments } = await parsePDFFile(fileBuffer, !hasCoverImage);
+    try {
+        const fileBuffer = await fs.readFile(pdfLocalPath);
 
-    // Fallback if no cover image is provided, parse the PDF to extract one
-    if (!hasCoverImage) {
-        if (!coverBuffer) {
-            throw new ApiError(500, "Failed to generate cover image from PDF");
+        // Always parse the PDF for its text segments! Only generate cover if missing.
+        const { coverBuffer, content: segments } = await parsePDFFile(fileBuffer, !hasCoverImage);
+
+        // Fallback if no cover image is provided, parse the PDF to extract one
+        if (!hasCoverImage) {
+            if (!coverBuffer) {
+                throw new ApiError(500, "Failed to generate cover image from PDF");
+            }
+            // Write generated cover buffer to temp file so ImageKit can upload it
+            coverImageLocalPath = path.join(os.tmpdir(), `cover-${Date.now()}.png`);
+            await fs.writeFile(coverImageLocalPath, coverBuffer);
         }
-        // Write generated cover buffer to temp file so ImageKit can upload it
-        coverImageLocalPath = path.join(os.tmpdir(), `cover-${Date.now()}.png`);
-        await fs.writeFile(coverImageLocalPath, coverBuffer);
+
+        // Run both uploads concurrently
+        const [pdfUpload, coverImageUpload] = await Promise.all([
+            uploadImageOnImageKit(pdfLocalPath, "Books"),
+            uploadImageOnImageKit(coverImageLocalPath, "BookCovers")
+        ]);
+
+        if (!pdfUpload?.result || !coverImageUpload?.result) {
+            throw new ApiError(500, "Failed to upload files");
+        }
+
+        const book = await createBook({
+            title,
+            author,
+            category,
+            persona,
+            slug,
+            coverImageUrl: coverImageUpload.result.url,
+            fileUrl: pdfUpload.result.url,
+            user
+        });
+
+        await addBookSegments(user, book._id, segments);
+
+        return book;
+    } finally {
+        // Clean up temporary local files whether upload succeeds or fails
+        if (pdfLocalPath) {
+            try { await fs.unlink(pdfLocalPath); } catch (e) {
+                console.error("Failed to delete temp PDF file", e);
+            }
+        }
+        if (coverImageLocalPath) {
+            try { await fs.unlink(coverImageLocalPath); } catch (e) {
+                console.error("Failed to delete temp cover file", e);
+            }
+        }
     }
-
-    // Run both uploads concurrently
-    const [pdfUpload, coverImageUpload] = await Promise.all([
-        uploadImageOnImageKit(pdfLocalPath, "Books"),
-        uploadImageOnImageKit(coverImageLocalPath, "BookCovers")
-    ]);
-
-    if (!pdfUpload?.result || !coverImageUpload?.result) {
-        throw new ApiError(500, "Failed to upload files");
-    }
-
-
-    const book = await createBook({
-        title,
-        author,
-        category,
-        persona,
-        slug,
-        coverImageUrl: coverImageUpload.result.url,
-        fileUrl: pdfUpload.result.url,
-        user
-    });
-
-    await addBookSegments(user, book._id, segments);
-
-    return book;
-
 }
