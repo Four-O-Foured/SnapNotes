@@ -7,6 +7,7 @@ import libraryRoutes from "./routes/library.routes.js";
 import { globalErrorHandler } from "./utils/globalErrorHandler.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path";
 
 const app = express();
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
