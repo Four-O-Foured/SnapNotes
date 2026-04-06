@@ -14,6 +14,7 @@ import ExamPage from "../pages/ExamPage.jsx";
 import LibraryPage from "../pages/LibraryPage.jsx";
 import UploadBookPage from "../pages/UploadBookPage.jsx";
 import { LucideBookPlus } from "lucide-react";
+import TTB from "../pages/TTB.jsx";
 
 // 1. The Parent (Layout) Route
 // This defines the shared structure (Navbar/Sidebar) for all /dashboard/* pages
@@ -115,5 +116,11 @@ export const libraryUploadRoute = createRoute({
     getParentRoute: () => libraryRoute,
     path: '/upload',
     component: UploadBookPage,
+});
+
+export const ttbRoute = createRoute({
+    getParentRoute: () => dashboardRoute,
+    path: '/library/book/talktobook/$bookId',
+    component: TTB,
 });
 
