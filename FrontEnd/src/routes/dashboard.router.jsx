@@ -1,8 +1,5 @@
-import { createRoute, Link, Outlet, redirect } from "@tanstack/react-router";
+import { createRoute, Link, Outlet, redirect, lazyRouteComponent } from "@tanstack/react-router";
 import { rootRoute } from "./router.jsx";
-import DashboardPage from "../pages/DashboardPage.jsx";
-import SnapNotePage from "../pages/SnapNotePage.jsx";
-import SnapNoteDetailsPage from "../pages/SnapNoteDetailsPage.jsx";
 import BubbleMenu from "@/components/layout/BubbleMenu";
 import { navItems } from "../lib/utils";
 import { store } from "../store/store";
@@ -10,11 +7,7 @@ import { setLoading } from "../store/slices/authSlice.js";
 import { setSnapNotes } from "../store/slices/snapNotesSlice.js";
 import { fetchSnapNotes } from "../hooks/useSnapNotes.js";
 import { queryClient } from "../lib/react-query";
-import ExamPage from "../pages/ExamPage.jsx";
-import LibraryPage from "../pages/LibraryPage.jsx";
-import UploadBookPage from "../pages/UploadBookPage.jsx";
 import { LucideBookPlus } from "lucide-react";
-import TTB from "../pages/TTB.jsx";
 
 // 1. The Parent (Layout) Route
 // This defines the shared structure (Navbar/Sidebar) for all /dashboard/* pages
@@ -63,7 +56,7 @@ export const dashboardRoute = createRoute({
 export const dashboardIndexRoute = createRoute({
     getParentRoute: () => dashboardRoute,
     path: '/',
-    component: DashboardPage,
+    component: lazyRouteComponent(() => import('../pages/DashboardPage.jsx')),
 });
 
 // 3. The SnapNotes Route (/dashboard/snapnotes)
@@ -78,20 +71,20 @@ export const snapNotesRoute = createRoute({
 export const snapNotesIndexRoute = createRoute({
     getParentRoute: () => snapNotesRoute,
     path: '/',
-    component: SnapNotePage,
+    component: lazyRouteComponent(() => import('../pages/SnapNotePage.jsx')),
 });
 
 // 4. The SnapNote Details Route (/dashboard/snapnotes/$noteId)
 export const snapNoteDetailsRoute = createRoute({
     getParentRoute: () => snapNotesRoute,
     path: '/$noteId',
-    component: SnapNoteDetailsPage,
+    component: lazyRouteComponent(() => import('../pages/SnapNoteDetailsPage.jsx')),
 });
 
 export const examRoute = createRoute({
     getParentRoute: () => dashboardRoute,
     path: '/exam',
-    component: ExamPage,
+    component: lazyRouteComponent(() => import('../pages/ExamPage.jsx')),
 });
 
 export const libraryRoute = createRoute({
@@ -109,18 +102,18 @@ export const libraryRoute = createRoute({
 export const libraryIndexRoute = createRoute({
     getParentRoute: () => libraryRoute,
     path: '/',
-    component: LibraryPage,
+    component: lazyRouteComponent(() => import('../pages/LibraryPage.jsx')),
 });
 
 export const libraryUploadRoute = createRoute({
     getParentRoute: () => libraryRoute,
     path: '/upload',
-    component: UploadBookPage,
+    component: lazyRouteComponent(() => import('../pages/UploadBookPage.jsx')),
 });
 
 export const ttbRoute = createRoute({
     getParentRoute: () => dashboardRoute,
     path: '/library/book/talktobook/$bookId',
-    component: TTB,
+    component: lazyRouteComponent(() => import('../pages/TTB.jsx')),
 });
 

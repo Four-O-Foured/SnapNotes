@@ -16,8 +16,13 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/snap", snapNotesRoutes);
 app.use("/api/library", libraryRoutes);
+app.use(express.static(path.join(__dirname, "../public/buildDist")));
 
 
 app.use(globalErrorHandler);
+
+app.get("*name", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/buildDist/index.html"));
+});
 
 export default app;
