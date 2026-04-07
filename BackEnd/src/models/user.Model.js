@@ -16,6 +16,16 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         select: false
+    },
+    subscriptionId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Subscription",
+        default: null,
+    },
+    serviceDetailsId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "UserServiceDetails",
+        default: null,
     }
 }, { timestamps: true, toJSON: options, toObject: options });
 

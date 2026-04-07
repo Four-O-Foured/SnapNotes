@@ -1,6 +1,6 @@
 import { clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { Camera, Brain, Star, FileText, Map, Settings } from "lucide-react";
+import { Camera, Brain, Star, FileText, Map, Settings, CreditCard } from "lucide-react";
 export function cn(...inputs) {
     return twMerge(clsx(inputs))
 }
@@ -45,6 +45,14 @@ export const navItems = [
         rotation: 18,
         offset: -10,
         hoverStyles: { bgColor: 'hsl(var(--snap-gradient-start))', textColor: '#ffffff', glowColor: 'hsla(var(--snap-gradient-start), 0.5)' }
+    },
+    {
+        label: 'Subscription',
+        to: '/dashboard/subscription',
+        icon: CreditCard,
+        rotation: 12,
+        offset: -5,
+        hoverStyles: { bgColor: 'hsl(var(--snap-cyan))', textColor: 'hsl(var(--snap-bg-main))', glowColor: 'hsla(var(--snap-cyan), 0.4)' }
     },
     {
         label: 'Settings',
@@ -179,3 +187,53 @@ export const VOICE_SETTINGS = {
     useSpeakerBoost: true, // Improves voice quality
     speed: 1.0, // Natural conversation speed
 };
+
+
+export const tiers = [
+    {
+        name: 'Basic',
+        description: 'Perfect for students just getting started with SnapNotes.',
+        monthlyPrice: 0,
+        yearlyPrice: 0,
+        features: [
+            'Up to 5 SnapNotes',
+            '1 Book Upload in Library',
+            '10 Minutes Listening Time',
+            'Standard Support'
+        ],
+        buttonText: 'Current Plan',
+        current: true,
+        popular: false
+    },
+    {
+        name: 'Pro',
+        description: 'For active learners who need more capacity and listening time.',
+        monthlyPrice: 199,
+        yearlyPrice: 1999,
+        features: [
+            'Up to 50 SnapNotes',
+            '10 Book Uploads',
+            '120 Minutes Listening Time',
+            'Priority Support'
+        ],
+        buttonText: 'Upgrade to pro',
+        current: false,
+        popular: true
+    },
+    {
+        name: 'Ultra',
+        description: 'The ultimate toolkit for serious academics and professionals.',
+        monthlyPrice: 499,
+        yearlyPrice: 4999,
+        features: [
+            'Unlimited SnapNotes',
+            'Unlimited Book Uploads',
+            'Unlimited Listening Time',
+            '24/7 Priority Support',
+            'Early Access to Features'
+        ],
+        buttonText: 'Upgrade to Ultra',
+        current: false,
+        popular: false
+    }
+];

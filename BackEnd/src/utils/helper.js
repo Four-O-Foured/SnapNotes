@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import {PDFParse} from "pdf-parse";
+import { PDFParse } from "pdf-parse";
 
 export const options = {
   transform: (doc, ret) => {
@@ -157,18 +157,18 @@ export const studentInstruction = (userPreference) => {
 
 export const generateSlug = (text) => {
   return text
-  .replace(/\.[^/.]+$/, '') // remove file extension
-  .toLowerCase() // convert to lowercase
-  .trim() // remove leading and trailing spaces
-  .replace(/[^\w\s-]/g, '') //remove special character (keep letter number space hyphens and underscores)
-  .replace(/[\s_]+/g, '-') //replace spaces and underscore with hyphens
-  .replace(/^-+|-+$/g, ''); //remove leading and trailing hyphens
+    .replace(/\.[^/.]+$/, '') // remove file extension
+    .toLowerCase() // convert to lowercase
+    .trim() // remove leading and trailing spaces
+    .replace(/[^\w\s-]/g, '') //remove special character (keep letter number space hyphens and underscores)
+    .replace(/[\s_]+/g, '-') //replace spaces and underscore with hyphens
+    .replace(/^-+|-+$/g, ''); //remove leading and trailing hyphens
 };
 
 export const splitIntoSegments = (
-    pagesText, // Accepts an array of strings (one per page)
-    segmentSize = 500, // Maximum words per segment
-    overlapSize = 50, // Words to overlap between segments for context
+  pagesText, // Accepts an array of strings (one per page)
+  segmentSize = 500, // Maximum words per segment
+  overlapSize = 50, // Words to overlap between segments for context
 ) => {
   // Validate parameters to prevent infinite loops
   if (segmentSize <= 0) {
@@ -194,7 +194,7 @@ export const splitIntoSegments = (
   while (startIndex < wordObjects.length) {
     const endIndex = Math.min(startIndex + segmentSize, wordObjects.length);
     const segmentWords = wordObjects.slice(startIndex, endIndex);
-    
+
     // Reconstruct the text for this segment
     const segmentText = segmentWords.map(obj => obj.word).join(' ');
 
@@ -224,7 +224,7 @@ export async function parsePDFFile(fileBuffer, generateCover = false) {
     const result = await parser.getText();
 
     console.log(result);
-    
+
     // Clean up unwanted watermarks/links before segmenting
     // The new package returns result.pages as an array of objects { text, num }
     const regex = /(https?:\/\/)?(www\.)?oceanofpdf\.com\/?/gi;
@@ -239,11 +239,11 @@ export async function parsePDFFile(fileBuffer, generateCover = false) {
 
     let coverBuffer = null;
     if (generateCover) {
-        // Extract 1st page natively using pdf-parse getScreenshot
-        const screenshotResult = await parser.getScreenshot({ scale: 2, first: 1, imageBuffer: true });
-        if (screenshotResult.pages && screenshotResult.pages.length > 0) {
-            coverBuffer = screenshotResult.pages[0].data;
-        }
+      // Extract 1st page natively using pdf-parse getScreenshot
+      const screenshotResult = await parser.getScreenshot({ scale: 2, first: 1, imageBuffer: true });
+      if (screenshotResult.pages && screenshotResult.pages.length > 0) {
+        coverBuffer = screenshotResult.pages[0].data;
+      }
     }
 
     return {
@@ -255,8 +255,45 @@ export async function parsePDFFile(fileBuffer, generateCover = false) {
     throw new Error(`Failed to parse PDF file: ${error instanceof Error ? error.message : String(error)}`);
   } finally {
     if (parser) {
-        await parser.destroy();
+      await parser.destroy();
     }
   }
+}
+
+
+
+
+
+export const tierDetails = (id, isYearly = false) => {
+  if (id === "a9a612e0-5a74-458c-bf0d-3384b119e796") {
+    return {
+      name: "Free",
+      price: 0,
+      duration: isYearly ? "1 year" : "1 month",
+      bookLimit: 1,
+      listeningTime:  10 * 60 * 1000, 
+      snapNotesLimit: 5 
+    }
+  }
+  else if (id === "da0181e9-6845-476a-92b9-07ab7d8a0ab1") {
+    return {
+      name: "Pro",
+      price: (isYearly ? 1999 : 199) * 100,
+      duration: isYearly ? "1 year" : "1 month",
+      bookLimit: 10,
+      listeningTime: 120 * 60 * 1000,
+      snapNotesLimit: 50
+    }
+  }
+  else if (id === "d73c55c8-89e7-442f-b2f8-4b9336238e33") {
+    return {
+      name: "Ultra",
+      price: (isYearly ? 4999 : 499) * 100,
+      duration: isYearly ? "1 year" : "1 month",
+      bookLimit: "Unlimited",
+      listeningTime: "Unlimited",
+      snapNotesLimit: "Unlimited"
+  }
+}
 }
 

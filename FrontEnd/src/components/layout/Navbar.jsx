@@ -20,15 +20,15 @@ const Navbar = () => {
 
                     {/* Navigation Links */}
                     <div className="hidden md:flex items-center gap-8">
-                        <a href="#features" className="text-small text-snap-text-secondary hover:text-snap-text-primary transition-colors">
+                        <Link to="/features" className="text-small text-snap-text-secondary hover:text-snap-text-primary transition-colors">
                             Features
-                        </a>
-                        <a href="#pricing" className="text-small text-snap-text-secondary hover:text-snap-text-primary transition-colors">
+                        </Link>
+                        <Link to="/dashboard/subscription" className="text-small text-snap-text-secondary hover:text-snap-text-primary transition-colors">
                             Pricing
-                        </a>
-                        <a href="#about" className="text-small text-snap-text-secondary hover:text-snap-text-primary transition-colors">
+                        </Link>
+                        <Link to="/about" className="text-small text-snap-text-secondary hover:text-snap-text-primary transition-colors">
                             About
-                        </a>
+                        </Link>
                     </div>
 
                     {/* CTA Buttons */}

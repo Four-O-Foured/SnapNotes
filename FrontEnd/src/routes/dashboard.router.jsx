@@ -117,3 +117,9 @@ export const ttbRoute = createRoute({
     component: lazyRouteComponent(() => import('../pages/TTB.jsx')),
 });
 
+export const subscriptionRoute = createRoute({
+    getParentRoute: () => dashboardRoute,
+    path: '/subscription',
+    component: lazyRouteComponent(() => import('../pages/SubscriptionPage.jsx')),
+});
+
